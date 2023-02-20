@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="c-démineur.cpp">
+    <ClCompile Include="c-démineur.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
