@@ -29,7 +29,7 @@ int main()
         {
             if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0)
             {
-                printf("[]");
+                printf("[ ]");
             }
             else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1) {
                 printf("[X]");
@@ -38,7 +38,7 @@ int main()
                 printf("[0]");
             }
             else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0) {
-                printf("[]");
+                printf("[ ]");
             }
         }
         printf("\n");
@@ -85,14 +85,41 @@ int main()
             else {
                 break;
             }
-            printf("nique toi");
+        }
+        if (grosTableau[x][y].visible == 1) {
+            printf("tu a déja révéler se coup");
+        }
+        else if (grosTableau[x][y].visible == 0) {
+            printf("new Revel");
+            grosTableau[x][y].visible == 1;
         }
         if (grosTableau[x][y].bombe == 1) {
             printf("ta perdue CHEEEEEEH \n");
             break;
         }
-        if (grosTableau[x][y].bombe == 0) {
+        else if (grosTableau[x][y].bombe == 0) {
             printf("chanceux je pari ta fait au pif \n");
+        }
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0)
+                {
+                    printf("[ ]");
+                }
+                else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1) {
+                    printf("[X]");
+                }
+                else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1) {
+                    printf("[0]");
+                }
+                else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0) {
+                    printf("[ ]");
+                }
+                printf("$d", grosTableau[i][j].visible);
+            }
+            printf("\n");
         }
     }
     return 0;
