@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #define n 10
 #define m 10
 
@@ -10,8 +11,24 @@ typedef struct Case{
     int indice;
 } Case;
 
-int main()
+void TryAdd1(Case grosTableau[n][m], int i, int j)
 {
+    if (i < 0 || i >= n)
+        return;
+
+    if (j < 0 || j >= m)
+        return;
+
+    if (grosTableau[i][j].bombe == 1)
+        return;
+
+    grosTableau[i][j].indice += 1;
+}
+
+int main()
+{   
+    srand(time(NULL));
+
     Case grosTableau[n][m];
     for (int i = 0; i < n; i++)
     {
@@ -19,11 +36,33 @@ int main()
         {
             grosTableau[i][j].bombe = 0;
             grosTableau[i][j].visible = 0;
+            grosTableau[i][j].indice = 0;
         }
     }
     
-    grosTableau[0][0].bombe = 1;
+    int u = 0;
+    while (u != n * m / 10) {
+        grosTableau[rand() % n][rand() % m].bombe = 1;
+        u += 1;
+    }
 
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            if (grosTableau[i][j].bombe == 1)
+            {
+                TryAdd1(grosTableau, i - 1, j - 1);
+                TryAdd1(grosTableau, i - 1, j);
+                TryAdd1(grosTableau, i - 1, j + 1);
+                TryAdd1(grosTableau, i, j - 1);
+                TryAdd1(grosTableau, i, j + 1);
+                TryAdd1(grosTableau, i + 1, j - 1);
+                TryAdd1(grosTableau, i + 1, j + 1);
+                TryAdd1(grosTableau, i + 1, j);
+            }
+        }
+    }
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < m; j++)
@@ -36,7 +75,7 @@ int main()
                 printf("[X]");
             }
             else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1) {
-                printf("[0]");
+                printf("[%d]",grosTableau[i][j].indice);
             }
             else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0) {
                 printf("[ ]");
@@ -55,7 +94,7 @@ int main()
         printf(" y = "); scanf_s("%d", &y);
         printf("Vous avez choisis x = %d y = %d\n", x, y);
         while (x >= 10 || y >= 10 || x < 0 || y < 0) {
-            if (x >= 10) {
+            if (x >= n) {
                 printf("votre valeur x est supérieur ou égal a 10 il doit être inférieur");
                 printf("quel coordonée voulez vous ?\n ");
                 printf("x = "); scanf_s("%d", &x);
@@ -69,7 +108,7 @@ int main()
                 printf(" y = "); scanf_s("%d", &y);
                 printf("Vous avez choisis x = %d y = %d\n", x, y);
             }
-            else if (y >= 10) {
+            else if (y >= m) {
                 printf("votre valeur y est supérieur ou égal a 10 il doit être inférieur");
                 printf("quel coordonée voulez vous ?\n ");
                 printf("x = "); scanf_s("%d", &x);
@@ -100,6 +139,7 @@ int main()
             {
                 for (int j = 0; j < m; j++)
                 {
+                    grosTableau[i][j].visible = 1;
                     if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0)
                     {
                         printf("[ ]");
@@ -108,7 +148,7 @@ int main()
                         printf("[X]");
                     }
                     else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1) {
-                        printf("[0]");
+                        printf("[%d]", grosTableau[i][j].indice);
                     }
                     else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0) {
                         printf("[ ]");
@@ -134,7 +174,7 @@ int main()
                     printf("[X]");
                 }
                 else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1) {
-                    printf("[0]");
+                    printf("[%d]", grosTableau[i][j].indice);
                 }
                 else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0) {
                     printf("[ ]");
