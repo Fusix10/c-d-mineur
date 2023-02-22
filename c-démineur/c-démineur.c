@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #define n 10
 #define m 10
 
@@ -12,6 +13,8 @@ typedef struct Case{
 
 int main()
 {
+    srand(time(NULL));
+
     Case grosTableau[n][m];
     for (int i = 0; i < n; i++)
     {
@@ -21,8 +24,22 @@ int main()
             grosTableau[i][j].visible = 0;
         }
     }
-    
+    /*
     grosTableau[0][0].bombe = 1;
+    grosTableau[5][5].bombe = 1;
+    grosTableau[4][6].bombe = 1;
+    grosTableau[2][2].bombe = 1;
+    grosTableau[9][9].bombe = 1;
+    */
+    
+    //grosTableau[i] = rand() % (10 + 1);
+    //grosTableau[j] = rand() % (10 + 1);
+
+    grosTableau[rand() % n][rand() % m].bombe = 1;
+    grosTableau[rand() % n][rand() % m].bombe = 1;
+    grosTableau[rand() % n][rand() % m].bombe = 1;
+    grosTableau[rand() % n][rand() % m].bombe = 1;
+    grosTableau[rand() % n][rand() % m].bombe = 1;
 
     for (int i = 0; i < n; i++)
     {
