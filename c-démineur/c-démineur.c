@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <stdlib.h>
 #define n 10
 #define m 10
 
@@ -7,6 +7,7 @@
 typedef struct Case{
     int visible;
     int bombe;
+    int indice;
 } Case;
 
 int main()
@@ -87,14 +88,35 @@ int main()
             }
         }
         if (grosTableau[x][y].visible == 1) {
-            printf("tu a déja révéler se coup");
+            printf("tu a déja révéler se coup \n");
         }
         else if (grosTableau[x][y].visible == 0) {
-            printf("new Revel");
-            grosTableau[x][y].visible == 1;
+            printf("new Revel \n");
+            grosTableau[x][y].visible = 1;
         }
         if (grosTableau[x][y].bombe == 1) {
-            printf("ta perdue CHEEEEEEH \n");
+            printf("ta perdue CHEEEEEEH, you are dumbass noob (dumdum) \n");
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0)
+                    {
+                        printf("[ ]");
+                    }
+                    else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1) {
+                        printf("[X]");
+                    }
+                    else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1) {
+                        printf("[0]");
+                    }
+                    else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0) {
+                        printf("[ ]");
+                    }
+
+                }
+                printf("\n");
+            }
             break;
         }
         else if (grosTableau[x][y].bombe == 0) {
@@ -117,7 +139,7 @@ int main()
                 else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0) {
                     printf("[ ]");
                 }
-                printf("$d", grosTableau[i][j].visible);
+                
             }
             printf("\n");
         }
