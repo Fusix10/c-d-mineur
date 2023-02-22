@@ -5,6 +5,7 @@
 #define m 10
 
 
+
 typedef struct Case{
     int visible;
     int bombe;
@@ -24,22 +25,11 @@ int main()
             grosTableau[i][j].visible = 0;
         }
     }
-    /*
-    grosTableau[0][0].bombe = 1;
-    grosTableau[5][5].bombe = 1;
-    grosTableau[4][6].bombe = 1;
-    grosTableau[2][2].bombe = 1;
-    grosTableau[9][9].bombe = 1;
-    */
-    
-    //grosTableau[i] = rand() % (10 + 1);
-    //grosTableau[j] = rand() % (10 + 1);
-
-    grosTableau[rand() % n][rand() % m].bombe = 1;
-    grosTableau[rand() % n][rand() % m].bombe = 1;
-    grosTableau[rand() % n][rand() % m].bombe = 1;
-    grosTableau[rand() % n][rand() % m].bombe = 1;
-    grosTableau[rand() % n][rand() % m].bombe = 1;
+    int u = 0;
+    while (u != n * m / 10) {
+        grosTableau[rand() % n][rand() % m].bombe = 1;
+        u += 1;
+    }
 
     for (int i = 0; i < n; i++)
     {
