@@ -93,26 +93,38 @@ int main()
             }
         }
     }
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i <= n ; i++)
     {
-        for (int j = 0; j < m; j++)
+        for (int j = 0; j <= m ; j++)
         {
-            if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0)
+            if (j == m && i != n)
             {
-                printf("[ ]");
+                printf("[%d]", i);
             }
-            else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1) {
-                printf("[X]");
+            if (i == n && j != m)
+            {
+                printf("[%d]", j);
             }
-            else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1) {
-                printf("[%d]",grosTableau[i][j].indice);
+            else{
+                if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0)
+                {
+                    printf("[ ]");
+                }
+                else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1) {
+                    printf("[X]");
+                }
+                else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1) {
+                    printf("[%d]",grosTableau[i][j].indice);
+                }
+                else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0) {
+                    printf("[ ]");
+                }
             }
-            else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0) {
-                printf("[ ]");
-            }
+            /*printf("%d et %d \n", i, j);*/
         }
         printf("\n");
     }
+    
     int winLose;
     winLose = 0;
     while (winLose !=1 || winLose !=0 ) {
@@ -123,30 +135,30 @@ int main()
         printf("x = "); scanf_s("%d", &x);
         printf(" y = "); scanf_s("%d", &y);
         printf("Vous avez choisis x = %d y = %d\n", x, y);
-        while (x >= 10 || y >= 10 || x < 0 || y < 0) {
+        while (x >= n || y >= m || x < 0 || y < 0) {
             if (x >= n) {
-                printf("votre valeur x est supérieur ou égal a 10 il doit être inférieur");
+                printf("votre valeur x est supérieur ou égal a %d il doit être inférieur\n", n);
                 printf("quel coordonée voulez vous ?\n ");
                 printf("x = "); scanf_s("%d", &x);
                 printf(" y = "); scanf_s("%d", &y);
                 printf("Vous avez choisis x = %d y = %d\n", x, y);
             }
             else if (x < 0) {
-                printf("votre valeur x est inférieur a 0 il doit être égal ou supérieur");
+                printf("votre valeur x est inférieur a 0 il doit être égal ou supérieur\n");
                 printf("quel coordonée voulez vous ?\n ");
                 printf("x = "); scanf_s("%d", &x);
                 printf(" y = "); scanf_s("%d", &y);
                 printf("Vous avez choisis x = %d y = %d\n", x, y);
             }
             else if (y >= m) {
-                printf("votre valeur y est supérieur ou égal a 10 il doit être inférieur");
+                printf("votre valeur y est supérieur ou égal a %d il doit être inférieur\n", m);
                 printf("quel coordonée voulez vous ?\n ");
                 printf("x = "); scanf_s("%d", &x);
                 printf(" y = "); scanf_s("%d", &y);
                 printf("Vous avez choisis x = %d y = %d\n", x, y);
             }
             else if (y < 0) {
-                printf("votre valeur y est inférieur a 0 il doit être égal ou supérieur");
+                printf("votre valeur y est inférieur a 0 il doit être égal ou supérieur\n");
                 printf("quel coordonée voulez vous ?\n ");
                 printf("x = "); scanf_s("%d", &x);
                 printf(" y = "); scanf_s("%d", &y);
