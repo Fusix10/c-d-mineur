@@ -9,6 +9,7 @@ typedef struct Case{
     int visible;
     int bombe;
     int indice;
+    int drapeau;
 } Case;
 
 void TryAdd1(Case grosTableau[n][m], int i, int j)
@@ -37,6 +38,7 @@ int main()
             grosTableau[i][j].bombe = 0;
             grosTableau[i][j].visible = 0;
             grosTableau[i][j].indice = 0;
+            grosTableau[i][j].drapeau = 0;
         }
     }
     
