@@ -37,6 +37,7 @@ int main()
             grosTableau[i][j].bombe = 0;
             grosTableau[i][j].visible = 0;
             grosTableau[i][j].indice = 0;
+
         }
     }
     
