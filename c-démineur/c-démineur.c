@@ -24,6 +24,36 @@ void TryAdd1(Case grosTableau[n][m], int i, int j)
 
     grosTableau[i][j].indice += 1;
 }
+void TryRevel(Case grosTableau[n][m], int i, int j)
+{
+    if (i < 0 || i >= n)
+        return;
+
+    if (j < 0 || j >= m)
+        return;
+
+    if (grosTableau[i][j].bombe == 1)
+        return;
+
+    if (grosTableau[i][j].visible == 1)
+        return;
+
+    if (grosTableau[i][j].indice != 0)
+        return;
+
+    grosTableau[i][j].visible = 1;
+
+    if (grosTableau[i][j].indice == 0) {
+        TryRevel(grosTableau, i - 1, j - 1);
+        TryRevel(grosTableau, i - 1, j);
+        TryRevel(grosTableau, i - 1, j + 1);
+        TryRevel(grosTableau, i, j - 1);
+        TryRevel(grosTableau, i, j + 1);
+        TryRevel(grosTableau, i + 1, j - 1);
+        TryRevel(grosTableau, i + 1, j + 1);
+        TryRevel(grosTableau, i + 1, j);
+    }
+}
 
 int main()
 {   
@@ -132,6 +162,16 @@ int main()
         else if (grosTableau[x][y].visible == 0) {
             printf("new Revel \n");
             grosTableau[x][y].visible = 1;
+            if (grosTableau[x][y].indice == 0){
+                TryRevel(grosTableau, x - 1, y - 1);
+                TryRevel(grosTableau, x - 1, y);
+                TryRevel(grosTableau, x - 1, y + 1);
+                TryRevel(grosTableau, x, y - 1);
+                TryRevel(grosTableau, x, y + 1);
+                TryRevel(grosTableau, x + 1, y - 1);
+                TryRevel(grosTableau, x + 1, y + 1);
+                TryRevel(grosTableau, x + 1, y);
+            }
         }
         if (grosTableau[x][y].bombe == 1) {
             printf("ta perdue CHEEEEEEH, you are dumbass noob (dumdum) \n");
