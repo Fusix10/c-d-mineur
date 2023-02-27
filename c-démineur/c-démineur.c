@@ -158,7 +158,6 @@ int main()
         printf("tout dabord voulez vous flag ? ou Revel une case ? \n");
         printf("1 = Revel une case, 2 = flag une case \n");
         printf("vous voulez : "); scanf_s("%d", &RorF);
-        printf("%d", RorF);
         while (RorF != 1 && RorF != 2) {
             printf("ha vous avez missclique peut être ?\n");
             printf("vous venez de donner un résulta incorrecte ! veuillez recommençais !\n");
