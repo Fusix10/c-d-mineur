@@ -2,17 +2,16 @@
 #include <stdlib.h>
 #include <time.h>
 #include <windows.h>
-#define n 10
-#define m 10
+#define n 5
+#define m 5
 
-
+void draw(grosTableau);
 typedef struct Case{
     int visible;
     int bombe;
     int indice;
     int flag;
 } Case;
-
 void Color(int couleurDuTexte, int couleurDeFond)
 {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -61,9 +60,15 @@ void TryRevel(Case grosTableau[n][m], int i, int j)
         TryRevel(grosTableau, i + 1, j);
     }
 }
-
 int main()
 {   
+    int n;
+    int m;
+    scanf("%d", n);
+    scanf("%d", m);
+    int* tab1 = malloc(sizeof(int) * n);
+    int** tab2 = malloc(sizeof(int*) * m);
+    tab2[]
     srand(time(NULL));
 
     Case grosTableau[n][m];
@@ -107,54 +112,16 @@ int main()
             }
         }
     }
-
-    for (int i = 0; i < n; i++)
-    {
-
-        for (int j = 0; j < m; j++)
-        {
-            if (grosTableau[i][j].flag == 1) {
-                printf("[F]");
-            }
-            if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1)
-            {
-                printf("[ ]");
-            }
-            else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                Color(4, 0);
-                printf("[X]");
-                Color(15, 0);
-            }
-            else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                printf("[%d]", grosTableau[i][j].indice);
-            }
-            else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1) {
-                printf("[ ]");
-            }
-        }
-        Color(3, 0);
-        printf("[%d]", i);
-        Color(15, 0);
-        printf("\n");
-    }
-    for (int i = 0; i < m; i++)
-    {
-        Color(3, 0);
-        printf("[%d]", i);
-        Color(15, 0);
-    }
-    printf("\n");
-    
+    draw(grosTableau);
     int winLose;
     winLose = 2;
-    
-    
+    int winQ;
+    winQ = 0;
     while (winLose !=1 && winLose !=0 ) {
-        int x; int y; int RorF; int winQ;
+        int x; int y; int RorF;
         x = 0;
         y = 0;
         RorF = 0;
-        winQ = 0;
         printf("tout dabord voulez vous flag ? ou Revel une case ? \n");
         printf("1 = Revel une case, 2 = flag une case \n");
         printf("vous voulez : "); scanf_s("%d", &RorF);
@@ -230,79 +197,16 @@ int main()
                     for (int j = 0; j < m; j++)
                     {
                         grosTableau[i][j].visible = 1;
-                        if (grosTableau[i][j].flag == 1) {
-                            printf("[F]");
-                        }
-                        if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1)
-                        {
-                            printf("[ ]");
-                        }
-                        else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                            Color(4, 0);
-                            printf("[X]");
-                            Color(15, 0);
-                        }
-                        else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                            printf("[%d]", grosTableau[i][j].indice);
-                        }
-                        else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1) {
-                            printf("[ ]");
-                        }
                     }
-                    Color(3, 0);
-                    printf("[%d]", i);
-                    Color(15, 0);
-                    printf("\n");
                 }
-                for (int i = 0; i < n; i++)
-                {
-                    Color(3, 0);
-                    printf("[%d]", i);
-                    Color(15, 0);
-                }
-                printf("\n");
+                draw(grosTableau);
                 winLose = 0;
                 break;
             }
             else if (grosTableau[x][y].bombe == 0 && grosTableau[x][y].flag != 1) {
                 printf("chanceux je pari ta fait au pif \n");
             }
-            for (int i = 0; i < n; i++)
-            {
-
-                for (int j = 0; j < m; j++)
-                {
-                    if (grosTableau[i][j].flag == 1) {
-                        printf("[F]");
-                    }
-                    if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1)
-                    {
-                        printf("[ ]");
-                    }
-                    else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                        Color(4, 0);
-                        printf("[X]");
-                        Color(15, 0);
-                    }
-                    else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                        printf("[%d]", grosTableau[i][j].indice);
-                    }
-                    else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1) {
-                        printf("[ ]");
-                    }
-                }
-                Color(3, 0);
-                printf("[%d]", i);
-                Color(15, 0);
-                printf("\n");
-            }
-            for (int i = 0; i < m; i++)
-            {
-                Color(3, 0);
-                printf("[%d]", i);
-                Color(15, 0);
-            }
-            printf("\n");
+            draw(grosTableau);
             if (winLose == 0) {
                 printf("\n dommage ta perde");
                 return 0;
@@ -360,77 +264,17 @@ int main()
                     for (int j = 0; j < m; j++)
                     {
                         grosTableau[i][j].visible = 1;
-                        if (grosTableau[i][j].flag == 1) {
-                            printf("[F]");
-                        }
-                        if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1)
-                        {
-                            printf("[ ]");
-                        }
-                        else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                            Color(4, 0);
-                            printf("[X]");
-                            Color(15, 0);
-                        }
-                        else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                            printf("[%d]", grosTableau[i][j].indice);
-                        }
-                        else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1) {
-                            printf("[ ]");
-                        }
                     }
-                    Color(3, 0);
-                    printf("[%d]", i);
-                    Color(15, 0);
-                    printf("\n");
                 }
-                for (int i = 0; i < m; i++)
-                {
-                    Color(3, 0);
-                    printf("[%d]", i);
-                    Color(15, 0);
-                }
+                draw(grosTableau);
                 winLose = 0;
                 break;
             }
             if (grosTableau[x][y].bombe == 1 && grosTableau[x][y].flag == 1) {
-                for (int i = 0; i < n; i++)
-                {
-
-                    for (int j = 0; j < m; j++)
-                    {
-                        if (grosTableau[i][j].flag == 1) {
-                            printf("[F]");
-                        }
-                        if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1)
-                        {
-                            printf("[ ]");
-                        }
-                        else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                            Color(4, 0);
-                            printf("[X]");
-                            Color(15, 0);
-                        }
-                        else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                            printf("[%d]", grosTableau[i][j].indice);
-                        }
-                        else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1) {
-                            printf("[ ]");
-                        }
-                    }
-                    Color(3, 0);
-                    printf("[%d]", i);
-                    Color(15, 0);
-                    printf("\n");
-                }
-                for (int i = 0; i < m; i++)
-                {
-                    Color(3, 0);
-                    printf("[%d]", i);
-                    Color(15, 0);
-                }
+                draw (grosTableau);
                 winQ += 1;
             }
+            printf("winQ = %d, nbBombe = %d", winQ, nbBombe);
             if (winQ == nbBombe) {
                 for (int i = 0; i < n; i++)
                 {
@@ -438,36 +282,9 @@ int main()
                     for (int j = 0; j < m; j++)
                     {
                         grosTableau[i][j].visible = 1;
-                        if (grosTableau[i][j].flag == 1) {
-                            printf("[F]");
-                        }
-                        if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1)
-                        {
-                            printf("[ ]");
-                        }
-                        else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                            Color(4, 0);
-                            printf("[X]");
-                            Color(15, 0);
-                        }
-                        else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                            printf("[%d]", grosTableau[i][j].indice);
-                        }
-                        else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1) {
-                            printf("[ ]");
-                        }
                     }
-                    Color(3, 0);
-                    printf("[%d]", i);
-                    Color(15, 0);
-                    printf("\n");
                 }
-                for (int i = 0; i < m; i++)
-                {
-                    Color(3, 0);
-                    printf("[%d]", i);
-                    Color(15, 0);
-                }
+                draw(grosTableau);
                 winLose = 1;
                 break;
             }
@@ -511,3 +328,64 @@ int main()
         }
     }
 }
+void draw(Case grosTableau[n][m])
+{
+    for (int i = 0; i < n; i++)
+    {
+
+        for (int j = 0; j < m; j++)
+        {
+            if (grosTableau[i][j].flag == 1) {
+                printf("[F]");
+            }
+            if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1)
+            {
+                printf("[ ]");
+            }
+            else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
+                Color(4, 0);
+                printf("[X]");
+                Color(15, 0);
+            }
+            else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
+                printf("[%d]", grosTableau[i][j].indice);
+            }
+            else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1) {
+                printf("[ ]");
+            }
+        }
+        Color(3, 0);
+        printf("[%d]", i);
+        Color(15, 0);
+        printf("\n");
+    }
+    for (int i = 0; i < m; i++)
+    {
+        Color(3, 0);
+        printf("[%d]", i);
+        Color(15, 0);
+    }
+    printf("\n");
+}
+/*int tg()
+{
+    int m = 10;
+    int n = 10;
+
+    int** t3 = malloc(sizeof(int*) * n);
+    for (int i = 0; i < n; i++) {
+        t3[i] = malloc(sizeof(int) * m);
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            t3[i][j] = 0;
+            printf("%d", t3[i][j]);
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        free(t3[i])
+    }
+    free(t3)
+
+        return 0;
+}*/
