@@ -98,7 +98,7 @@ int main()
     printf("quelle difficulter ?");
     printf("1 = facile, 2 = normale, 3 = Difficile\n");
     printf("votre choix: "); scanf_s("%d", &dificulte);
-    while (dificulte != 1 && dificulte != 2 && dificulte != 3) {
+    while (dificulte != 1 && dificulte != 2 && dificulte != 3 && dificulte != 4){
         printf("\nArrête de cherche dla d stp\n");
         printf("1 = facile, 2 = normale, 3 = Difficile\n");
         printf("votre choix: "); scanf_s("%d", &dificulte);
@@ -120,13 +120,15 @@ int main()
             grosTableau[i][j].flag = 0;
         }
     }
-    int DifB = 0;
+    float DifB = 0;
     if (dificulte == 1) {
         DifB = 15;
     }else if (dificulte == 2) {
         DifB = 10;
     }else if (dificulte == 3) {
         DifB = 5;
+    }else if (dificulte == 4) {
+        DifB = 1.4;
     }
     int nbBombe = ((n * m) +5) / DifB;
     if (nbBombe < 1) {
