@@ -128,7 +128,23 @@ int main()
     }else if (dificulte == 3) {
         DifB = 5;
     }else if (dificulte == 4) {
-        DifB = 1.4;
+        DifB = 5;
+    }
+    if (dificulte == 4) {
+        Case** grosTableauTroll = malloc(sizeof(Case*) * n);
+        for (int i = 0; i < n; i++) {
+            grosTableauTroll[i] = malloc(sizeof(Case) * m);
+        }
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                grosTableauTroll[i][j].bombe = 0;
+                grosTableauTroll[i][j].visible = 0;
+                grosTableauTroll[i][j].indice = 0;
+                grosTableauTroll[i][j].flag = 0;
+            }
+        }
     }
     int nbBombe = ((n * m) +5) / DifB;
     if (nbBombe < 1) {
@@ -143,6 +159,15 @@ int main()
             b = rand() % m;
         }
         grosTableau[a][b].bombe = 1;
+        if (dificulte == 4) {
+            a = rand() % n;
+            b = rand() % m;
+            while (grosTableauTroll[a][b].bombe == 1) {
+                a = rand() % n;
+                b = rand() % m;
+            }
+            grosTableauTroll[a][b].bombe = 1;
+        }
     }
 
     for (int i = 0; i < n; i++)
@@ -159,6 +184,19 @@ int main()
                 TryAdd1(grosTableau, i + 1, j - 1);
                 TryAdd1(grosTableau, i + 1, j + 1);
                 TryAdd1(grosTableau, i + 1, j);
+            }
+            if (dificulte == 4) {
+                if (grosTableauTroll[i][j].bombe == 1)
+                {
+                    TryAdd1(grosTableauTroll, i - 1, j - 1);
+                    TryAdd1(grosTableauTroll, i - 1, j);
+                    TryAdd1(grosTableauTroll, i - 1, j + 1);
+                    TryAdd1(grosTableauTroll, i, j - 1);
+                    TryAdd1(grosTableauTroll, i, j + 1);
+                    TryAdd1(grosTableauTroll, i + 1, j - 1);
+                    TryAdd1(grosTableauTroll, i + 1, j + 1);
+                    TryAdd1(grosTableauTroll, i + 1, j);
+                }
             }
         }
     }
