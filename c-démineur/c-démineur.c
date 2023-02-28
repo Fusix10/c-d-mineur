@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <windows.h>
-#define n 5
-#define m 5
 
-void draw(grosTableau);
+int n = 10;
+int m = 10;
+
+void draw(t3);
 typedef struct Case{
     int visible;
     int bombe;
@@ -17,7 +18,7 @@ void Color(int couleurDuTexte, int couleurDeFond)
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(H, couleurDeFond * 16 + couleurDuTexte);
 }
-void TryAdd1(Case grosTableau[n][m], int i, int j)
+void TryAdd1(Case **grosTableau, int i, int j)
 {
     if (i < 0 || i >= n)
         return;
@@ -30,7 +31,7 @@ void TryAdd1(Case grosTableau[n][m], int i, int j)
 
     grosTableau[i][j].indice += 1;
 }
-void TryRevel(Case grosTableau[n][m], int i, int j)
+void TryRevel(Case **grosTableau, int i, int j)
 {
     if (i < 0 || i >= n)
         return;
@@ -62,16 +63,53 @@ void TryRevel(Case grosTableau[n][m], int i, int j)
 }
 int main()
 {   
-    int n;
-    int m;
-    scanf("%d", n);
-    scanf("%d", m);
-    int* tab1 = malloc(sizeof(int) * n);
-    int** tab2 = malloc(sizeof(int*) * m);
-    tab2[]
+    int dificulte = 0;
+    int start = 0;
+    printf("Yo ! tu est la pour jouer ho démineur ?");
+    printf("1 = oui, 2 = oui\n");
+    printf("votre choix: "); scanf_s("%d", &start);
+    while(start !=1 && start != 2 && start != 3){
+        printf("Arrête de cherche dla d stp (III)\n");
+        printf("1 = oui, 2 = oui");
+        printf("votre choix: "); scanf_s("%d", &start);
+    }
+    if (start == 3) {
+        printf("indice : D TO B -> B TO T -> B TO T\n");
+        printf("11355697606988287594799323879791150804541232104347921866306692444090823645661768807697387094130483725659339837670733736882471196601955693525550440478587842499211871936989718351760352633522631235209079544958860288103480452207853820861395966375701996320215673920305342770881089551936212615749993072854248455881669153726689852346870949170993232419544974686353482939653157200903451353632250256807160932050113722312020085396976938959809052622557924166687332840864904175125660039183585429591964976803426949745734813800804657");
+        return 0;
+    }
+    printf("hey huu du-coup vus que j'ai la flèmme de le faire pour toi TU vas chosir la taille du du démineur ! (c'est du x * y)\n");
+    printf("x = "); scanf_s("%d", &n);
+    printf("y = "); scanf_s("%d", &m);
+    while (n <= 0 || m <= 0) {
+        if (n < 0 || m < 0) {
+            printf("mais...MAIS...MON VIER, TU ME MET UNE Valeur 0 OU NEGATIF TA DEJA VUS UN TABLEAU DE X = %d ET DE Y = %d\n", n ,m);
+        }
+        if (n >= 0 && m >= 0) {
+            if (n == 0 && m == 0) {
+                printf("tu te rend compte que x = 0 et y = 0 c'est un tableau de RIEN genre YA RIEN tu peut même pas VOIR le tableau je... je.... tu mes soul, pour la peine turn off\n");
+                return 0;
+            }
+            printf("alors huuuu, 0 * n'importe quoi, sa fait 0 donc ya rien... ouai ouai c'est balo =')\n");
+        }
+        printf("x = "); scanf_s("%d", &n);
+        printf("y = "); scanf_s("%d", &m);
+    }
+    printf("quelle difficulter ?");
+    printf("1 = facile, 2 = normale, 3 = Difficile\n");
+    printf("votre choix: "); scanf_s("%d", &dificulte);
+    while (dificulte != 1 && dificulte != 2 && dificulte != 3) {
+        printf("\nArrête de cherche dla d stp\n");
+        printf("1 = facile, 2 = normale, 3 = Difficile\n");
+        printf("votre choix: "); scanf_s("%d", &dificulte);
+    }
+    Case ** grosTableau = malloc(sizeof(Case*) * n);
+    for (int i = 0; i < n; i++) {
+        grosTableau[i] = malloc(sizeof(Case) * m);
+    }
+    
     srand(time(NULL));
 
-    Case grosTableau[n][m];
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < m; j++)
@@ -82,8 +120,18 @@ int main()
             grosTableau[i][j].flag = 0;
         }
     }
-
-    int nbBombe = (n * m) / 10;
+    int DifB = 0;
+    if (dificulte == 1) {
+        DifB = 15;
+    }else if (dificulte == 2) {
+        DifB = 10;
+    }else if (dificulte == 3) {
+        DifB = 5;
+    }
+    int nbBombe = ((n * m) +5) / DifB;
+    if (nbBombe < 1) {
+        nbBombe = 1;
+    }
     for (int i = 0; i < nbBombe; i++){
         int a; int b;
         a = rand() % n;
@@ -129,10 +177,10 @@ int main()
             printf("ha vous avez missclique peut être ?\n");
             printf("vous venez de donner un résulta incorrecte ! veuillez recommençais !\n");
             printf("1 = Revel une case, 2 = flag une case \n");
-            printf("vous voulez : "); scanf_s("%d ", &RorF);
+            printf("vous voulez : "); scanf_s("%d", &RorF);
         }
         if (RorF == 1) {
-            printf("\nquel coordonné voulez vous ?\n ");
+            printf("quel coordonné voulez vous ?\n ");
             printf("x = "); scanf_s("%d", &x);
             printf(" y = "); scanf_s("%d", &y);
             printf("Vous avez choisis x = %d y = %d\n", x, y);
@@ -274,7 +322,6 @@ int main()
                 draw (grosTableau);
                 winQ += 1;
             }
-            printf("winQ = %d, nbBombe = %d", winQ, nbBombe);
             if (winQ == nbBombe) {
                 for (int i = 0; i < n; i++)
                 {
@@ -306,6 +353,10 @@ int main()
             main();
         }
         else {
+            for (int i = 0; i < n; i++) {
+                free(grosTableau[i]);
+            }
+            free(grosTableau);
             return 0;
         }
     }
@@ -324,17 +375,18 @@ int main()
             main();
         }
         else {
+            for (int i = 0; i < n; i++) {
+                free(grosTableau[i]);
+            }
+            free(grosTableau);
             return 0;
         }
     }
 }
-void draw(Case grosTableau[n][m])
+void draw(Case **grosTableau)
 {
-    for (int i = 0; i < n; i++)
-    {
-
-        for (int j = 0; j < m; j++)
-        {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
             if (grosTableau[i][j].flag == 1) {
                 printf("[F]");
             }
@@ -367,25 +419,4 @@ void draw(Case grosTableau[n][m])
     }
     printf("\n");
 }
-/*int tg()
-{
-    int m = 10;
-    int n = 10;
 
-    int** t3 = malloc(sizeof(int*) * n);
-    for (int i = 0; i < n; i++) {
-        t3[i] = malloc(sizeof(int) * m);
-    }
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            t3[i][j] = 0;
-            printf("%d", t3[i][j]);
-        }
-    }
-    for (int i = 0; i < n; i++) {
-        free(t3[i])
-    }
-    free(t3)
-
-        return 0;
-}*/
