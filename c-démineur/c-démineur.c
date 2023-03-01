@@ -6,7 +6,8 @@
 int n = 10;
 int m = 10;
 
-void draw(t3);
+void flag(Case** grosTableau, int x, int y, int* nbBombe, int* winLose, int* winQ);
+void draw(Case** grosTableau);
 typedef struct Case{
     int visible;
     int bombe;
@@ -61,18 +62,30 @@ void TryRevel(Case **grosTableau, int i, int j)
         TryRevel(grosTableau, i + 1, j);
     }
 }
+
+
+int AskNumber(const char * message, int min, int max)
+{
+    int u = 0;
+    scanf_s("%d", &u);
+    while (u < min || u > max) 
+    {
+        printf("%s", message);
+        scanf_s("%d", &u);
+        printf("\n");
+    }
+    return u;
+}
+
 int main()
 {   
     int dificulte = 0;
     int start = 0;
-    printf("Yo ! tu est la pour jouer ho démineur ?");
+    printf("Yo ! tu est la pour jouer ho démineur ?\n");
     printf("1 = oui, 2 = oui\n");
-    printf("votre choix: "); scanf_s("%d", &start);
-    while(start !=1 && start != 2 && start != 3){
-        printf("Arrête de cherche dla d stp (III)\n");
-        printf("1 = oui, 2 = oui");
-        printf("votre choix: "); scanf_s("%d", &start);
-    }
+    printf("votre choix: ");
+    const char* message = "Arrête de cherche dla d stp (III)\n1 = oui, 2 = oui\nvotre choix: ";
+    start = AskNumber(message, 1, 3);
     if (start == 3) {
         printf("indice : D TO B -> B TO T -> B TO T\n");
         printf("11355697606988287594799323879791150804541232104347921866306692444090823645661768807697387094130483725659339837670733736882471196601955693525550440478587842499211871936989718351760352633522631235209079544958860288103480452207853820861395966375701996320215673920305342770881089551936212615749993072854248455881669153726689852346870949170993232419544974686353482939653157200903451353632250256807160932050113722312020085396976938959809052622557924166687332840864904175125660039183585429591964976803426949745734813800804657");
@@ -97,13 +110,11 @@ int main()
     }
     printf("quelle difficulter ?");
     printf("1 = facile, 2 = normale, 3 = Difficile\n");
-    printf("votre choix: "); scanf_s("%d", &dificulte);
-    while (dificulte != 1 && dificulte != 2 && dificulte != 3 && dificulte != 4){
-        printf("\nArrête de cherche dla d stp\n");
-        printf("1 = facile, 2 = normale, 3 = Difficile\n");
-        printf("votre choix: "); scanf_s("%d", &dificulte);
-    }
+    printf("votre choix: ");
+    message = "\nArrête de cherche dla d stp\n1 = facile, 2 = normale, 3 = Difficile\nvotre choix: ";
+    dificulte = AskNumber(message, 1, 4);
     Case ** grosTableau = malloc(sizeof(Case*) * n);
+    Case** grosTableauTroll;
     for (int i = 0; i < n; i++) {
         grosTableau[i] = malloc(sizeof(Case) * m);
     }
@@ -128,7 +139,23 @@ int main()
     }else if (dificulte == 3) {
         DifB = 5;
     }else if (dificulte == 4) {
-        DifB = 1.4;
+        DifB = 5;
+    }
+    if (dificulte == 4) {
+        grosTableauTroll = malloc(sizeof(Case*) * n);
+        for (int i = 0; i < n; i++) {
+            grosTableauTroll[i] = malloc(sizeof(Case) * m);
+        }
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                grosTableauTroll[i][j].bombe = 0;
+                grosTableauTroll[i][j].visible = 0;
+                grosTableauTroll[i][j].indice = 0;
+                grosTableauTroll[i][j].flag = 0;
+            }
+        }
     }
     int nbBombe = ((n * m) +5) / DifB;
     if (nbBombe < 1) {
@@ -143,6 +170,15 @@ int main()
             b = rand() % m;
         }
         grosTableau[a][b].bombe = 1;
+        if (dificulte == 4) {
+            a = rand() % n;
+            b = rand() % m;
+            while (grosTableauTroll[a][b].bombe == 1) {
+                a = rand() % n;
+                b = rand() % m;
+            }
+            grosTableauTroll[a][b].bombe = 1;
+        }
     }
 
     for (int i = 0; i < n; i++)
@@ -160,27 +196,41 @@ int main()
                 TryAdd1(grosTableau, i + 1, j + 1);
                 TryAdd1(grosTableau, i + 1, j);
             }
+            if (dificulte == 4) {
+                if (grosTableauTroll[i][j].bombe == 1)
+                {
+                    TryAdd1(grosTableauTroll, i - 1, j - 1);
+                    TryAdd1(grosTableauTroll, i - 1, j);
+                    TryAdd1(grosTableauTroll, i - 1, j + 1);
+                    TryAdd1(grosTableauTroll, i, j - 1);
+                    TryAdd1(grosTableauTroll, i, j + 1);
+                    TryAdd1(grosTableauTroll, i + 1, j - 1);
+                    TryAdd1(grosTableauTroll, i + 1, j + 1);
+                    TryAdd1(grosTableauTroll, i + 1, j);
+                }
+            }
         }
     }
     draw(grosTableau);
+    if (dificulte == 4) {
+        draw(grosTableauTroll);
+    }
     int winLose;
     winLose = 2;
     int winQ;
     winQ = 0;
-    while (winLose !=1 && winLose !=0 ) {
+    while (winLose != 1 && winLose !=0 ) {
+        
         int x; int y; int RorF;
         x = 0;
         y = 0;
         RorF = 0;
         printf("tout dabord voulez vous flag ? ou Revel une case ? \n");
         printf("1 = Revel une case, 2 = flag une case \n");
-        printf("vous voulez : "); scanf_s("%d", &RorF);
-        while (RorF != 1 && RorF != 2) {
-            printf("ha vous avez missclique peut être ?\n");
-            printf("vous venez de donner un résulta incorrecte ! veuillez recommençais !\n");
-            printf("1 = Revel une case, 2 = flag une case \n");
-            printf("vous voulez : "); scanf_s("%d", &RorF);
-        }
+        printf("vous voulez : ");
+        message = "ha vous avez missclique peut être ?\nvous venez de donner un résulta incorrecte ! veuillez recommençais !\n1 = Revel une case, 2 = flag une case \nvous voulez : ";
+        RorF = AskNumber(message, 1, 2);
+        
         if (RorF == 1) {
             printf("quel coordonné voulez vous ?\n ");
             printf("x = "); scanf_s("%d", &x);
@@ -234,6 +284,18 @@ int main()
                     TryRevel(grosTableau, x + 1, y - 1);
                     TryRevel(grosTableau, x + 1, y + 1);
                     TryRevel(grosTableau, x + 1, y);
+                    if (dificulte == 4) {
+                        if (grosTableauTroll[x][m - y].indice == 0) {
+                            TryRevel(grosTableauTroll, x - 1,m - y - 1);
+                            TryRevel(grosTableauTroll, x - 1,m - y);
+                            TryRevel(grosTableauTroll, x - 1,m - y + 1);
+                            TryRevel(grosTableauTroll, x,m - y - 1);
+                            TryRevel(grosTableauTroll, x,m - y + 1);
+                            TryRevel(grosTableauTroll, x + 1,m - y - 1);
+                            TryRevel(grosTableauTroll, x + 1,m - y + 1);
+                            TryRevel(grosTableauTroll, x + 1,m - y);
+                        }
+                    }
                 }
             }
             if (grosTableau[x][y].flag == 1)
@@ -258,11 +320,22 @@ int main()
             }
             draw(grosTableau);
             if (winLose == 0) {
-                printf("\n dommage ta perde");
+                printf("\n dommage ta perdu");
                 return 0;
             }
         }
         else{
+            int GD;
+            if (dificulte == 4){
+            
+                GD = 0;
+                printf("dans quelle tableau voulez vous flag ?\n");
+                printf("1 = gauche, 2 = droite\n ");
+                printf("Votre choix: "); 
+                message = "faut vraimment mais VRAIMMENT que t'arrête de tenter des chiffre impossible quand on te propose des truc\ndans quelle tableau voulez vous flag ?\n1 = gauche, 2 = droite\nVotre choix: ";
+                GD = AskNumber(message, 1, 2);
+            
+            }
             printf("quelle case voulez vous flag ?\n");
             printf("écriver les coordoner voulu :\n ");
             printf("x = "); scanf_s("%d", &x);
@@ -301,57 +374,42 @@ int main()
                     break;
                 }
             }
-            if (grosTableau[x][y].flag == 1) {
-                printf("tu a déja mi un flag ici \n");
-            }
-            else if (grosTableau[x][y].flag == 0) {
-                grosTableau[x][y].flag = 1;
-            }
-            if (grosTableau[x][y].bombe == 0 && grosTableau[x][y].flag == 1) {
-                for (int i = 0; i < n; i++)
-                {
-
-                    for (int j = 0; j < m; j++)
-                    {
-                        grosTableau[i][j].visible = 1;
-                    }
+            if (dificulte == 4){
+                if (GD = 2) {
+                    flag(grosTableauTroll, x, y, &nbBombe, &winLose, &winQ);
                 }
-                draw(grosTableau);
-                winLose = 0;
-                break;
-            }
-            if (grosTableau[x][y].bombe == 1 && grosTableau[x][y].flag == 1) {
-                draw (grosTableau);
-                winQ += 1;
-            }
-            if (winQ == nbBombe) {
-                for (int i = 0; i < n; i++)
-                {
-
-                    for (int j = 0; j < m; j++)
-                    {
-                        grosTableau[i][j].visible = 1;
-                    }
+                else {
+                    flag(grosTableau, x, y, &nbBombe, &winLose, &winQ);
                 }
-                draw(grosTableau);
-                winLose = 1;
-                break;
+            }
+            else{
+                flag(grosTableau, x, y, &nbBombe, &winLose, &winQ);
             }
         }
     }
+    
     int restart = 0;
+    
     if (winLose == 1) {
+    
         printf("\n\n WOW vous avez réussie a découvrire tout les bombe GG\n\n");
         printf("veux tu rejouer ?\n");
         printf("1 = oui et 2 = non\n");
-        printf("Votre choix: "); scanf_s("%d", &restart);
-        while (restart != 1 && restart != 2) {
-            printf("\nMon vier tu te fout de moi ? les réponse sont entre 1 et 2 d'ou tu me sort un %d\n", restart);
-            printf("veux tu rejouer ?\n");
-            printf("1 = oui et 2 = non\n");
-            printf("Votre choix: "); scanf_s("%d", &restart);
-        }
+        printf("Votre choix: ");
+        message = "\nMon vier tu te fout de moi ? les réponse sont entre 1 et 2 \nveux tu rejouer ?\n1 = oui et 2 = non\nVotre choix: ";
+        restart = AskNumber(message, 1, 2);
+     
         if (restart == 1) {
+            for (int i = 0; i < n; i++) {
+                free(grosTableau[i]);
+            }
+            free(grosTableau);
+            if (dificulte == 4) {
+                for (int i = 0; i < n; i++) {
+                    free(grosTableauTroll[i]);
+                }
+                free(grosTableauTroll);
+            }
             main();
         }
         else {
@@ -359,21 +417,35 @@ int main()
                 free(grosTableau[i]);
             }
             free(grosTableau);
+            if (dificulte == 4) {
+                for (int i = 0; i < n; i++) {
+                    free(grosTableauTroll[i]);
+                }
+                free(grosTableauTroll);
+            }
             return 0;
         }
     }
     else if (winLose == 0) {
+        
         printf("\n\n ha rip tes mort x)\n\n");
         printf("veux tu rejouer ?\n");
         printf("1 = oui et 2 = non\n");
-        printf("Votre choix: "); scanf_s("%d", &restart);
-        while (restart != 1 && restart != 2) {
-            printf("\nMon vier tu te fout de moi ? les réponse sont entre 1 et 2 d'ou tu me sort un %d\n", restart);
-            printf("veux tu rejouer ?\n");
-            printf("1 = oui et 2 = non\n");
-            printf("Votre choix: "); scanf_s("%d", &restart);
-        }
+        printf("Votre choix: ");
+        message = "\nMon vier tu te fout de moi ? les réponse sont entre 1 et 2 \nveux tu rejouer ?\n1 = oui et 2 = non\nVotre choix: ";
+        restart = AskNumber(message, 1, 2);
+        
         if (restart == 1) {
+            for (int i = 0; i < n; i++) {
+                free(grosTableau[i]);
+            }
+            free(grosTableau);
+            if (dificulte == 4) {
+                for (int i = 0; i < n; i++) {
+                    free(grosTableauTroll[i]);
+                }
+                free(grosTableauTroll);
+            }
             main();
         }
         else {
@@ -381,10 +453,18 @@ int main()
                 free(grosTableau[i]);
             }
             free(grosTableau);
+            if (dificulte == 4) {
+                for (int i = 0; i < n; i++) {
+                    free(grosTableauTroll[i]);
+                }
+                free(grosTableauTroll);
+            }
             return 0;
         }
     }
+
 }
+
 void draw(Case **grosTableau)
 {
     for (int i = 0; i < n; i++) {
@@ -421,4 +501,40 @@ void draw(Case **grosTableau)
     }
     printf("\n");
 }
+void flag(Case** grosTableau, int x, int y, int* nbBombe, int* winLose, int* winQ) {
+    if (grosTableau[x][y].flag == 1) {
+        printf("tu a déja mi un flag ici \n");
+    }
+    else if (grosTableau[x][y].flag == 0) {
+        grosTableau[x][y].flag = 1;
+    }
+    if (grosTableau[x][y].bombe == 0 && grosTableau[x][y].flag == 1) {
+        for (int i = 0; i < n; i++)
+        {
 
+            for (int j = 0; j < m; j++)
+            {
+                grosTableau[i][j].visible = 1;
+            }
+        }
+        draw(grosTableau);
+        *winLose = 0;
+    }
+    if (grosTableau[x][y].bombe == 1 && grosTableau[x][y].flag == 1) {
+        draw(grosTableau);
+        grosTableau[x][y].visible = 1;
+        *winQ += 1;
+    }
+    if (*winQ == *nbBombe) {
+        for (int i = 0; i < n; i++)
+        {
+
+            for (int j = 0; j < m; j++)
+            {
+                grosTableau[i][j].visible = 1;
+            }
+        }
+        draw(grosTableau);
+        *winLose = 1;
+    }
+}
