@@ -6,18 +6,14 @@
 int n = 10;
 int m = 10;
 
-typedef struct Case Case;
-
 void flag(Case** grosTableau, int x, int y, int* nbBombe, int* winLose, int* winQ);
 void draw(Case** grosTableau);
-
-struct Case {
+typedef struct Case{
     int visible;
     int bombe;
     int indice;
     int flag;
-};
-
+} Case;
 void Color(int couleurDuTexte, int couleurDeFond)
 {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -55,38 +51,27 @@ void TryRevel(Case **grosTableau, int i, int j)
 
     grosTableau[i][j].visible = 1;
 
-    TryRevel(grosTableau, i - 1, j - 1);
-    TryRevel(grosTableau, i - 1, j);
-    TryRevel(grosTableau, i - 1, j + 1);
-    TryRevel(grosTableau, i, j - 1);
-    TryRevel(grosTableau, i, j + 1);
-    TryRevel(grosTableau, i + 1, j - 1);
-    TryRevel(grosTableau, i + 1, j + 1);
-    TryRevel(grosTableau, i + 1, j);
-}
-
-
-void ClearBuffer () {
-    char c = getchar();
-    while (c != '\n') {
-        c = getchar();
+    if (grosTableau[i][j].indice == 0) {
+        TryRevel(grosTableau, i - 1, j - 1);
+        TryRevel(grosTableau, i - 1, j);
+        TryRevel(grosTableau, i - 1, j + 1);
+        TryRevel(grosTableau, i, j - 1);
+        TryRevel(grosTableau, i, j + 1);
+        TryRevel(grosTableau, i + 1, j - 1);
+        TryRevel(grosTableau, i + 1, j + 1);
+        TryRevel(grosTableau, i + 1, j);
     }
 }
+
 
 int AskNumber(const char * message, int min, int max)
 {
     int u = 0;
-    int error = scanf_s("%d", &u);
-    if (error == 0) {
-        ClearBuffer();
-    }
-    while (error == 0 || u < min || u > max)
+    scanf_s("%d", &u);
+    while (u < min || u > max) 
     {
         printf("%s", message);
-        error = scanf_s("%d", &u);
-        if (error == 0) {
-            ClearBuffer();
-        }
+        scanf_s("%d", &u);
         printf("\n");
     }
     return u;
@@ -129,7 +114,7 @@ int main()
     message = "\nArrête de cherche dla d stp\n1 = facile, 2 = normale, 3 = Difficile\nvotre choix: ";
     dificulte = AskNumber(message, 1, 4);
     Case ** grosTableau = malloc(sizeof(Case*) * n);
-    Case** grosTableauTroll = NULL;
+    Case** grosTableauTroll;
     for (int i = 0; i < n; i++) {
         grosTableau[i] = malloc(sizeof(Case) * m);
     }
@@ -226,13 +211,16 @@ int main()
             }
         }
     }
-    draw(grosTableau, grosTableauTroll);
+    draw(grosTableau);
+    if (dificulte == 4) {
+        draw(grosTableauTroll);
+    }
     int winLose;
     winLose = 2;
     int winQ;
     winQ = 0;
     while (winLose != 1 && winLose !=0 ) {
-        draw(grosTableau, grosTableauTroll);
+        
         int x; int y; int RorF;
         x = 0;
         y = 0;
@@ -323,14 +311,14 @@ int main()
                         grosTableau[i][j].visible = 1;
                     }
                 }
-                draw(grosTableau,grosTableauTroll);
+                draw(grosTableau);
                 winLose = 0;
                 break;
             }
             else if (grosTableau[x][y].bombe == 0 && grosTableau[x][y].flag != 1) {
                 printf("chanceux je pari ta fait au pif \n");
             }
-            draw(grosTableau,grosTableauTroll);
+            draw(grosTableau);
             if (winLose == 0) {
                 printf("\n dommage ta perdu");
                 return 0;
@@ -477,14 +465,12 @@ int main()
 
 }
 
-void draw(Case **grosTableau, Case **grosTableauTroll)
+void draw(Case **grosTableau)
 {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
             if (grosTableau[i][j].flag == 1) {
-                Color(6, 0);
                 printf("[F]");
-                Color(15, 0);
             }
             if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1)
             {
@@ -506,37 +492,6 @@ void draw(Case **grosTableau, Case **grosTableauTroll)
         printf("[%d]", i);
         Color(15, 0);
         printf("\n");
-        if (grosTableauTroll != NULL) {
-            for (int j = 0; j < m; j++) {
-                if (grosTableauTroll[i][j].flag == 1) {
-                    Color(6, 0);
-                    printf("[F]");
-                    Color(15, 0);
-                }
-                if (grosTableauTroll[i][j].bombe == 1 && grosTableauTroll[i][j].visible == 0 && grosTableauTroll[i][j].flag != 1)
-                {
-                    printf("[ ]");
-                }
-                else if (grosTableauTroll[i][j].bombe == 1 && grosTableauTroll[i][j].visible == 1 && grosTableauTroll[i][j].flag != 1) {
-                    Color(4, 0);
-                    printf("[X]");
-                    Color(15, 0);
-                }
-                else if (grosTableauTroll[i][j].bombe == 0 && grosTableauTroll[i][j].visible == 1 && grosTableauTroll[i][j].flag != 1) {
-                    printf("[%d]", grosTableauTroll[i][j].indice);
-                }
-                else if (grosTableauTroll[i][j].bombe == 0 && grosTableauTroll[i][j].visible == 0 && grosTableauTroll[i][j].flag != 1) {
-                    printf("[ ]");
-                }
-                for (int i = 0; i < m; i++)
-                {
-                    Color(3, 0);
-                    printf("[%d]", i);
-                    Color(15, 0);
-                    printf("\n");
-                }
-            }
-        }
     }
     for (int i = 0; i < m; i++)
     {
@@ -546,7 +501,7 @@ void draw(Case **grosTableau, Case **grosTableauTroll)
     }
     printf("\n");
 }
-void flag(Case** grosTableau,int x, int y, int* nbBombe, int* winLose, int* winQ) {
+void flag(Case** grosTableau, int x, int y, int* nbBombe, int* winLose, int* winQ) {
     if (grosTableau[x][y].flag == 1) {
         printf("tu a déja mi un flag ici \n");
     }
@@ -562,9 +517,11 @@ void flag(Case** grosTableau,int x, int y, int* nbBombe, int* winLose, int* winQ
                 grosTableau[i][j].visible = 1;
             }
         }
+        draw(grosTableau);
         *winLose = 0;
     }
     if (grosTableau[x][y].bombe == 1 && grosTableau[x][y].flag == 1) {
+        draw(grosTableau);
         grosTableau[x][y].visible = 1;
         *winQ += 1;
     }
@@ -577,6 +534,7 @@ void flag(Case** grosTableau,int x, int y, int* nbBombe, int* winLose, int* winQ
                 grosTableau[i][j].visible = 1;
             }
         }
+        draw(grosTableau);
         *winLose = 1;
     }
 }
