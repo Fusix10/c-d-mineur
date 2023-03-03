@@ -6,20 +6,24 @@
 int n = 10;
 int m = 10;
 
+typedef struct Case Case;
+
 void flag(Case** grosTableau, int x, int y, int* nbBombe, int* winLose, int* winQ);
-void draw(Case** grosTableau);
-typedef struct Case{
+void draw(Case** grosTableau, Case** grosTableauTroll);
+
+struct Case {
     int visible;
     int bombe;
     int indice;
     int flag;
-} Case;
+};
+
 void Color(int couleurDuTexte, int couleurDeFond)
 {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(H, couleurDeFond * 16 + couleurDuTexte);
 }
-void TryAdd1(Case **grosTableau, int i, int j)
+void TryAdd1(Case** grosTableau, int i, int j)
 {
     if (i < 0 || i >= n)
         return;
@@ -32,8 +36,11 @@ void TryAdd1(Case **grosTableau, int i, int j)
 
     grosTableau[i][j].indice += 1;
 }
-void TryRevel(Case **grosTableau, int i, int j)
+void TryRevel(Case** grosTableau, int i, int j)
 {
+    if (grosTableau[i][j].visible == 1)
+        return;
+
     if (i < 0 || i >= n)
         return;
 
@@ -43,42 +50,53 @@ void TryRevel(Case **grosTableau, int i, int j)
     if (grosTableau[i][j].bombe == 1)
         return;
 
-    if (grosTableau[i][j].visible == 1)
-        return;
+    printf("%d", grosTableau[i][j].bombe);
 
-    if (grosTableau[i][j].indice != 0)
+    if (grosTableau[i][j].indice != 0) {
+        grosTableau[i][j].visible = 1;
         return;
-
+    }
     grosTableau[i][j].visible = 1;
 
-    if (grosTableau[i][j].indice == 0) {
-        TryRevel(grosTableau, i - 1, j - 1);
-        TryRevel(grosTableau, i - 1, j);
-        TryRevel(grosTableau, i - 1, j + 1);
-        TryRevel(grosTableau, i, j - 1);
-        TryRevel(grosTableau, i, j + 1);
-        TryRevel(grosTableau, i + 1, j - 1);
-        TryRevel(grosTableau, i + 1, j + 1);
-        TryRevel(grosTableau, i + 1, j);
-    }
+    TryRevel(grosTableau, i - 1, j - 1);
+    TryRevel(grosTableau, i - 1, j);
+    TryRevel(grosTableau, i - 1, j + 1);
+    TryRevel(grosTableau, i, j - 1);
+    TryRevel(grosTableau, i, j + 1);
+    TryRevel(grosTableau, i + 1, j - 1);
+    TryRevel(grosTableau, i + 1, j + 1);
+    TryRevel(grosTableau, i + 1, j);
 }
 
 
-int AskNumber(const char * message, int min, int max)
+void ClearBuffer() {
+    char c = getchar();
+    while (c != '\n') {
+        c = getchar();
+    }
+}
+
+int AskNumber(const char* message, int min, int max)
 {
     int u = 0;
-    scanf_s("%d", &u);
-    while (u < min || u > max) 
+    int error = scanf_s("%d", &u);
+    if (error == 0) {
+        ClearBuffer();
+    }
+    while (error == 0 || u < min || u > max)
     {
         printf("%s", message);
-        scanf_s("%d", &u);
+        error = scanf_s("%d", &u);
+        if (error == 0) {
+            ClearBuffer();
+        }
         printf("\n");
     }
     return u;
 }
 
 int main()
-{   
+{
     int dificulte = 0;
     int start = 0;
     printf("Yo ! tu est la pour jouer ho démineur ?\n");
@@ -96,7 +114,7 @@ int main()
     printf("y = "); scanf_s("%d", &m);
     while (n <= 0 || m <= 0) {
         if (n < 0 || m < 0) {
-            printf("mais...MAIS...MON VIER, TU ME MET UNE Valeur 0 OU NEGATIF TA DEJA VUS UN TABLEAU DE X = %d ET DE Y = %d\n", n ,m);
+            printf("mais...MAIS...MON VIER, TU ME MET UNE Valeur 0 OU NEGATIF TA DEJA VUS UN TABLEAU DE X = %d ET DE Y = %d\n", n, m);
         }
         if (n >= 0 && m >= 0) {
             if (n == 0 && m == 0) {
@@ -113,12 +131,12 @@ int main()
     printf("votre choix: ");
     message = "\nArrête de cherche dla d stp\n1 = facile, 2 = normale, 3 = Difficile\nvotre choix: ";
     dificulte = AskNumber(message, 1, 4);
-    Case ** grosTableau = malloc(sizeof(Case*) * n);
-    Case** grosTableauTroll;
+    Case** grosTableau = malloc(sizeof(Case*) * n);
+    Case** grosTableauTroll = NULL;
     for (int i = 0; i < n; i++) {
         grosTableau[i] = malloc(sizeof(Case) * m);
     }
-    
+
     srand(time(NULL));
 
     for (int i = 0; i < n; i++)
@@ -134,11 +152,14 @@ int main()
     float DifB = 0;
     if (dificulte == 1) {
         DifB = 15;
-    }else if (dificulte == 2) {
+    }
+    else if (dificulte == 2) {
         DifB = 10;
-    }else if (dificulte == 3) {
+    }
+    else if (dificulte == 3) {
         DifB = 5;
-    }else if (dificulte == 4) {
+    }
+    else if (dificulte == 4) {
         DifB = 5;
     }
     if (dificulte == 4) {
@@ -157,11 +178,11 @@ int main()
             }
         }
     }
-    int nbBombe = ((n * m) +5) / DifB;
+    int nbBombe = ((n * m) + 5) / DifB;
     if (nbBombe < 1) {
         nbBombe = 1;
     }
-    for (int i = 0; i < nbBombe; i++){
+    for (int i = 0; i < nbBombe; i++) {
         int a; int b;
         a = rand() % n;
         b = rand() % m;
@@ -211,16 +232,12 @@ int main()
             }
         }
     }
-    draw(grosTableau);
-    if (dificulte == 4) {
-        draw(grosTableauTroll);
-    }
     int winLose;
     winLose = 2;
     int winQ;
     winQ = 0;
-    while (winLose != 1 && winLose !=0 ) {
-        
+    while (winLose != 1 && winLose != 0) {
+        draw(grosTableau, grosTableauTroll);
         int x; int y; int RorF;
         x = 0;
         y = 0;
@@ -230,7 +247,6 @@ int main()
         printf("vous voulez : ");
         message = "ha vous avez missclique peut être ?\nvous venez de donner un résulta incorrecte ! veuillez recommençais !\n1 = Revel une case, 2 = flag une case \nvous voulez : ";
         RorF = AskNumber(message, 1, 2);
-        
         if (RorF == 1) {
             printf("quel coordonné voulez vous ?\n ");
             printf("x = "); scanf_s("%d", &x);
@@ -274,8 +290,8 @@ int main()
             }
             else if (grosTableau[x][y].visible == 0) {
                 printf("new Revel \n");
-                grosTableau[x][y].visible = 1;
                 if (grosTableau[x][y].indice == 0) {
+                    TryRevel(grosTableau, x, y);
                     TryRevel(grosTableau, x - 1, y - 1);
                     TryRevel(grosTableau, x - 1, y);
                     TryRevel(grosTableau, x - 1, y + 1);
@@ -284,17 +300,24 @@ int main()
                     TryRevel(grosTableau, x + 1, y - 1);
                     TryRevel(grosTableau, x + 1, y + 1);
                     TryRevel(grosTableau, x + 1, y);
-                    if (dificulte == 4) {
-                        if (grosTableauTroll[x][m - y].indice == 0) {
-                            TryRevel(grosTableauTroll, x - 1,m - y - 1);
-                            TryRevel(grosTableauTroll, x - 1,m - y);
-                            TryRevel(grosTableauTroll, x - 1,m - y + 1);
-                            TryRevel(grosTableauTroll, x,m - y - 1);
-                            TryRevel(grosTableauTroll, x,m - y + 1);
-                            TryRevel(grosTableauTroll, x + 1,m - y - 1);
-                            TryRevel(grosTableauTroll, x + 1,m - y + 1);
-                            TryRevel(grosTableauTroll, x + 1,m - y);
-                        }
+                }
+                else {
+                    grosTableau[x][y].visible = 1;
+                }
+                if (dificulte == 4) {
+                    if (grosTableauTroll[x][m - 1 - y].indice == 0) {
+                        TryRevel(grosTableauTroll, x, m - 1 - y);
+                        TryRevel(grosTableauTroll, x - 1, m - 1 - y - 1);
+                        TryRevel(grosTableauTroll, x - 1, m - 1 - y);
+                        TryRevel(grosTableauTroll, x - 1, m - 1 - y + 1);
+                        TryRevel(grosTableauTroll, x, m - 1 - y - 1);
+                        TryRevel(grosTableauTroll, x, m - 1 - y + 1);
+                        TryRevel(grosTableauTroll, x + 1, m - 1 - y - 1);
+                        TryRevel(grosTableauTroll, x + 1, m - 1 - y + 1);
+                        TryRevel(grosTableauTroll, x + 1, m - 1 - y);
+                    }
+                    else {
+                        grosTableauTroll[x][m - 1 - y].visible = 1;
                     }
                 }
             }
@@ -311,30 +334,29 @@ int main()
                         grosTableau[i][j].visible = 1;
                     }
                 }
-                draw(grosTableau);
+                draw(grosTableau, grosTableauTroll);
                 winLose = 0;
                 break;
             }
             else if (grosTableau[x][y].bombe == 0 && grosTableau[x][y].flag != 1) {
                 printf("chanceux je pari ta fait au pif \n");
             }
-            draw(grosTableau);
             if (winLose == 0) {
                 printf("\n dommage ta perdu");
                 return 0;
             }
         }
-        else{
+        else {
             int GD;
-            if (dificulte == 4){
-            
+            if (dificulte == 4) {
+
                 GD = 0;
                 printf("dans quelle tableau voulez vous flag ?\n");
                 printf("1 = gauche, 2 = droite\n ");
-                printf("Votre choix: "); 
+                printf("Votre choix: ");
                 message = "faut vraimment mais VRAIMMENT que t'arrête de tenter des chiffre impossible quand on te propose des truc\ndans quelle tableau voulez vous flag ?\n1 = gauche, 2 = droite\nVotre choix: ";
                 GD = AskNumber(message, 1, 2);
-            
+
             }
             printf("quelle case voulez vous flag ?\n");
             printf("écriver les coordoner voulu :\n ");
@@ -374,7 +396,7 @@ int main()
                     break;
                 }
             }
-            if (dificulte == 4){
+            if (dificulte == 4) {
                 if (GD = 2) {
                     flag(grosTableauTroll, x, y, &nbBombe, &winLose, &winQ);
                 }
@@ -382,23 +404,23 @@ int main()
                     flag(grosTableau, x, y, &nbBombe, &winLose, &winQ);
                 }
             }
-            else{
+            else {
                 flag(grosTableau, x, y, &nbBombe, &winLose, &winQ);
             }
         }
     }
-    
+
     int restart = 0;
-    
+
     if (winLose == 1) {
-    
+
         printf("\n\n WOW vous avez réussie a découvrire tout les bombe GG\n\n");
         printf("veux tu rejouer ?\n");
         printf("1 = oui et 2 = non\n");
         printf("Votre choix: ");
         message = "\nMon vier tu te fout de moi ? les réponse sont entre 1 et 2 \nveux tu rejouer ?\n1 = oui et 2 = non\nVotre choix: ";
         restart = AskNumber(message, 1, 2);
-     
+
         if (restart == 1) {
             for (int i = 0; i < n; i++) {
                 free(grosTableau[i]);
@@ -427,14 +449,14 @@ int main()
         }
     }
     else if (winLose == 0) {
-        
+
         printf("\n\n ha rip tes mort x)\n\n");
         printf("veux tu rejouer ?\n");
         printf("1 = oui et 2 = non\n");
         printf("Votre choix: ");
         message = "\nMon vier tu te fout de moi ? les réponse sont entre 1 et 2 \nveux tu rejouer ?\n1 = oui et 2 = non\nVotre choix: ";
         restart = AskNumber(message, 1, 2);
-        
+
         if (restart == 1) {
             for (int i = 0; i < n; i++) {
                 free(grosTableau[i]);
@@ -465,39 +487,187 @@ int main()
 
 }
 
-void draw(Case **grosTableau)
+void draw(Case** grosTableau, Case** grosTableauTroll)
 {
+    int espacement = m - 1;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
             if (grosTableau[i][j].flag == 1) {
-                printf("[F]");
+                if (m > 10) {
+                    Color(6, 0);
+                    printf("[ F ]");
+                    Color(15, 0);
+                }
+                else {
+                    Color(6, 0);
+                    printf("[F]");
+                    Color(15, 0);
+                }
             }
             if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1)
             {
-                printf("[ ]");
+                if (m > 10) {
+                    printf("[   ]");
+                }
+                else {
+                    printf("[ ]");
+                }
             }
             else if (grosTableau[i][j].bombe == 1 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                Color(4, 0);
-                printf("[X]");
-                Color(15, 0);
+                if (m > 10) {
+                    Color(4, 0);
+                    printf("[ X ]");
+                    Color(15, 0);
+                }
+                else {
+                    Color(4, 0);
+                    printf("[X]");
+                    Color(15, 0);
+                }
             }
             else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 1 && grosTableau[i][j].flag != 1) {
-                printf("[%d]", grosTableau[i][j].indice);
+                if (m > 10) {
+                    printf("[ %d ]", grosTableau[i][j].indice);
+                }
+                else {
+                    printf("[%d]", grosTableau[i][j].indice);
+                }
             }
             else if (grosTableau[i][j].bombe == 0 && grosTableau[i][j].visible == 0 && grosTableau[i][j].flag != 1) {
-                printf("[ ]");
+                if (m > 10) {
+                    printf("[   ]");
+                }
+                else {
+                    printf("[ ]");
+                }
             }
         }
-        Color(3, 0);
-        printf("[%d]", i);
-        Color(15, 0);
-        printf("\n");
+        if (n > 10) {
+            if (i >= 10) {
+                Color(3, 0);
+                printf("[%d ]", i);
+                Color(15, 0);
+            }
+            else {
+                Color(3, 0);
+                printf("[ %d ]", i);
+                Color(15, 0);
+            }
+        }
+        else {
+            Color(3, 0);
+            printf("[%d]", i);
+            Color(15, 0);
+        }
+        if (grosTableauTroll == NULL) {
+            printf("\n");
+        }
+        if (grosTableauTroll != NULL) {
+            for (int j = 0; j < m; j++) {
+                if (grosTableauTroll[i][j].flag == 1) {
+                    if (m > 10) {
+                        Color(6, 0);
+                        printf("[ F ]");
+                        Color(15, 0);
+                    }
+                    else {
+                        Color(6, 0);
+                        printf("[F]");
+                        Color(15, 0);
+                    }
+                }
+                if (grosTableauTroll[i][j].bombe == 1 && grosTableauTroll[i][j].visible == 0 && grosTableauTroll[i][j].flag != 1)
+                {
+                    if (m > 10) {
+                        printf("[   ]");
+                    }
+                    else {
+                        printf("[ ]");
+                    }
+                }
+                else if (grosTableauTroll[i][j].bombe == 1 && grosTableauTroll[i][j].visible == 1 && grosTableauTroll[i][j].flag != 1) {
+                    if (m > 10) {
+                        Color(4, 0);
+                        printf("[ X ]");
+                        Color(15, 0);
+                    }
+                    else {
+                        Color(4, 0);
+                        printf("[X]");
+                        Color(15, 0);
+                    }
+                }
+                else if (grosTableauTroll[i][j].bombe == 0 && grosTableauTroll[i][j].visible == 1 && grosTableauTroll[i][j].flag != 1) {
+                    if (m > 10) {
+                        printf("[ %d ]", grosTableauTroll[i][j].indice);
+                    }
+                    else {
+                        printf("[%d]", grosTableauTroll[i][j].indice);
+                    }   
+                }
+                else if (grosTableauTroll[i][j].bombe == 0 && grosTableauTroll[i][j].visible == 0 && grosTableauTroll[i][j].flag != 1) {
+                    if (m > 10) {
+                        printf("[   ]");
+                    }
+                    else {
+                        printf("[ ]");
+                    }
+                }
+            }
+            printf("\n");
+        }
     }
     for (int i = 0; i < m; i++)
     {
         Color(3, 0);
-        printf("[%d]", i);
+        if (m > 10) {
+            if (i >= 10) {
+                Color(3, 0);
+                printf("[%d ]", i);
+                Color(15, 0);
+            }
+            else {
+                Color(3, 0);
+                printf("[ %d ]", i);
+                Color(15, 0);
+            }
+        }
+        else {
+            Color(3, 0);
+            printf("[%d]", i);
+            Color(15, 0);
+        }
         Color(15, 0);
+    }
+    if (grosTableauTroll != NULL) {
+        if (espacement >= 10) {
+            printf("     ");
+        }
+        else {
+            printf("   ");
+        }
+        for (int i = 0; i < m; i++)
+        {
+            Color(3, 0);
+            if (m > 10) {
+                if (i >= 10) {
+                    Color(3, 0);
+                    printf("[%d ]", i);
+                    Color(15, 0);
+                }
+                else {
+                    Color(3, 0);
+                    printf("[ %d ]", i);
+                    Color(15, 0);
+                }
+            }
+            else {
+                Color(3, 0);
+                printf("[%d]", i);
+                Color(15, 0);
+            }
+            Color(15, 0);
+        }
     }
     printf("\n");
 }
@@ -517,11 +687,9 @@ void flag(Case** grosTableau, int x, int y, int* nbBombe, int* winLose, int* win
                 grosTableau[i][j].visible = 1;
             }
         }
-        draw(grosTableau);
         *winLose = 0;
     }
     if (grosTableau[x][y].bombe == 1 && grosTableau[x][y].flag == 1) {
-        draw(grosTableau);
         grosTableau[x][y].visible = 1;
         *winQ += 1;
     }
@@ -534,7 +702,6 @@ void flag(Case** grosTableau, int x, int y, int* nbBombe, int* winLose, int* win
                 grosTableau[i][j].visible = 1;
             }
         }
-        draw(grosTableau);
         *winLose = 1;
     }
 }
