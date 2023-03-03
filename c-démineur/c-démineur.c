@@ -23,6 +23,7 @@ void Color(int couleurDuTexte, int couleurDeFond)
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(H, couleurDeFond * 16 + couleurDuTexte);
 }
+
 void TryAdd1(Case** grosTableau, int i, int j)
 {
     if (i < 0 || i >= n)
@@ -38,24 +39,26 @@ void TryAdd1(Case** grosTableau, int i, int j)
 }
 void TryRevel(Case** grosTableau, int i, int j)
 {
-    if (grosTableau[i][j].visible == 1)
-        return;
-
     if (i < 0 || i >= n)
         return;
 
     if (j < 0 || j >= m)
         return;
 
+    if (grosTableau[i][j].flag == 1)
+        return;
+
     if (grosTableau[i][j].bombe == 1)
         return;
 
-    printf("%d", grosTableau[i][j].bombe);
+    if (grosTableau[i][j].visible == 1)
+        return;
 
     if (grosTableau[i][j].indice != 0) {
         grosTableau[i][j].visible = 1;
         return;
     }
+
     grosTableau[i][j].visible = 1;
 
     TryRevel(grosTableau, i - 1, j - 1);
@@ -99,7 +102,7 @@ int main()
 {
     int dificulte = 0;
     int start = 0;
-    printf("Yo ! tu est la pour jouer ho démineur ?\n");
+    printf("Yo ! tu est la pour jouer au demineur ?\n");
     printf("1 = oui, 2 = oui\n");
     printf("votre choix: ");
     const char* message = "Arrête de cherche dla d stp (III)\n1 = oui, 2 = oui\nvotre choix: ";
@@ -109,7 +112,7 @@ int main()
         printf("11355697606988287594799323879791150804541232104347921866306692444090823645661768807697387094130483725659339837670733736882471196601955693525550440478587842499211871936989718351760352633522631235209079544958860288103480452207853820861395966375701996320215673920305342770881089551936212615749993072854248455881669153726689852346870949170993232419544974686353482939653157200903451353632250256807160932050113722312020085396976938959809052622557924166687332840864904175125660039183585429591964976803426949745734813800804657");
         return 0;
     }
-    printf("hey huu du-coup vus que j'ai la flèmme de le faire pour toi TU vas chosir la taille du du démineur ! (c'est du x * y)\n");
+    printf("hey huu du-coup vus que j'ai la flemme de le faire pour toi TU vas chosir la taille du du demineur ! (c'est du x * y)\n");
     printf("x = "); scanf_s("%d", &n);
     printf("y = "); scanf_s("%d", &m);
     while (n <= 0 || m <= 0) {
@@ -126,7 +129,7 @@ int main()
         printf("x = "); scanf_s("%d", &n);
         printf("y = "); scanf_s("%d", &m);
     }
-    printf("quelle difficulter ?");
+    printf("Quelle est ta difficulter ?");
     printf("1 = facile, 2 = normale, 3 = Difficile\n");
     printf("votre choix: ");
     message = "\nArrête de cherche dla d stp\n1 = facile, 2 = normale, 3 = Difficile\nvotre choix: ";
@@ -201,7 +204,9 @@ int main()
             grosTableauTroll[a][b].bombe = 1;
         }
     }
-
+    if (dificulte == 4) {
+        nbBombe = nbBombe * 2;
+    }
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < m; j++)
@@ -285,61 +290,69 @@ int main()
                     break;
                 }
             }
-            if (grosTableau[x][y].visible == 1) {
-                printf("tu a déja révéler se coup \n");
-            }
-            else if (grosTableau[x][y].visible == 0) {
-                printf("new Revel \n");
-                if (grosTableau[x][y].indice == 0) {
+            if (dificulte != 4) {
+                if (grosTableau[x][y].visible == 1) {
+                    printf("tu a déja révéler se coup \n");
+                } 
+                else {
+                    printf("new Revel \n");
                     TryRevel(grosTableau, x, y);
-                    TryRevel(grosTableau, x - 1, y - 1);
-                    TryRevel(grosTableau, x - 1, y);
-                    TryRevel(grosTableau, x - 1, y + 1);
-                    TryRevel(grosTableau, x, y - 1);
-                    TryRevel(grosTableau, x, y + 1);
-                    TryRevel(grosTableau, x + 1, y - 1);
-                    TryRevel(grosTableau, x + 1, y + 1);
-                    TryRevel(grosTableau, x + 1, y);
+                }
+            }
+            if (dificulte == 4) {
+                if (grosTableau[x][y].visible == 1 && grosTableauTroll[x][m - 1 - y].visible == 1) {
+                    printf("tu a déja révéler se coup \n");
                 }
                 else {
-                    grosTableau[x][y].visible = 1;
-                }
-                if (dificulte == 4) {
-                    if (grosTableauTroll[x][m - 1 - y].indice == 0) {
-                        TryRevel(grosTableauTroll, x, m - 1 - y);
-                        TryRevel(grosTableauTroll, x - 1, m - 1 - y - 1);
-                        TryRevel(grosTableauTroll, x - 1, m - 1 - y);
-                        TryRevel(grosTableauTroll, x - 1, m - 1 - y + 1);
-                        TryRevel(grosTableauTroll, x, m - 1 - y - 1);
-                        TryRevel(grosTableauTroll, x, m - 1 - y + 1);
-                        TryRevel(grosTableauTroll, x + 1, m - 1 - y - 1);
-                        TryRevel(grosTableauTroll, x + 1, m - 1 - y + 1);
-                        TryRevel(grosTableauTroll, x + 1, m - 1 - y);
-                    }
-                    else {
-                        grosTableauTroll[x][m - 1 - y].visible = 1;
-                    }
+                    printf("new Revel \n");
+                    TryRevel(grosTableau, x, y);
+                    TryRevel(grosTableauTroll, x, m - 1 - y);
                 }
             }
-            if (grosTableau[x][y].flag == 1)
-            {
-                printf("vous avez flag cette endroit vous ne pouvez donc pas la revel !");
-            }
-            else if (grosTableau[x][y].bombe == 1 && grosTableau[x][y].flag != 1) {
-                printf("ta perdue CHEEEEEEH, you are dumbass noob (dumdum) \n");
-                for (int i = 0; i < n; i++)
+            if (dificulte != 4) {
+                if (grosTableau[x][y].flag == 1)
                 {
-                    for (int j = 0; j < m; j++)
-                    {
-                        grosTableau[i][j].visible = 1;
-                    }
+                    printf("vous avez flag cette endroit vous ne pouvez donc pas la revel !");
                 }
-                draw(grosTableau, grosTableauTroll);
-                winLose = 0;
-                break;
+                else if (grosTableau[x][y].bombe == 1 && grosTableau[x][y].flag != 1) {
+                    printf("ta perdue CHEEEEEEH, you are dumbass noob (dumdum) \n");
+                    for (int i = 0; i < n; i++)
+                    {
+                        for (int j = 0; j < m; j++)
+                        {
+                            grosTableau[i][j].visible = 1;
+                        }
+                    }
+                    draw(grosTableau, grosTableauTroll);
+                    winLose = 0;
+                    break;
+                }
+                else if (grosTableau[x][y].bombe == 0 && grosTableau[x][y].flag != 1) {
+                    printf("chanceux je pari ta fait au pif \n");
+                }
             }
-            else if (grosTableau[x][y].bombe == 0 && grosTableau[x][y].flag != 1) {
-                printf("chanceux je pari ta fait au pif \n");
+            else{
+                if (grosTableau[x][y].flag == 1 || grosTableauTroll[x][y].flag == 1)
+                {
+                    printf("vous avez flag cette endroit vous ne pouvez donc pas la revel !");
+                }
+                else if (grosTableau[x][y].bombe == 1 && grosTableau[x][y].flag != 1 || grosTableauTroll[x][m - 1 - y].bombe == 1 && grosTableauTroll[x][m - 1 - y].flag != 1) {
+                    printf("ta perdue CHEEEEEEH, you are dumbass noob (dumdum) \n");
+                    for (int i = 0; i < n; i++)
+                    {
+                        for (int j = 0; j < m; j++)
+                        {
+                            grosTableau[i][j].visible = 1;
+                            grosTableauTroll[i][j].visible = 1;
+                        }
+                    }
+                    draw(grosTableau, grosTableauTroll);
+                    winLose = 0;
+                    break;
+                }
+                else if (grosTableau[x][y].bombe == 0 && grosTableau[x][y].flag != 1 || grosTableauTroll[x][m - 1 - y].bombe == 0 && grosTableauTroll[x][m - 1 - y].flag != 1) {
+                    printf("chanceux je pari ta fait au pif \n");
+                }
             }
             if (winLose == 0) {
                 printf("\n dommage ta perdu");
@@ -348,15 +361,14 @@ int main()
         }
         else {
             int GD;
+            GD = 0;
             if (dificulte == 4) {
 
-                GD = 0;
                 printf("dans quelle tableau voulez vous flag ?\n");
                 printf("1 = gauche, 2 = droite\n ");
                 printf("Votre choix: ");
                 message = "faut vraimment mais VRAIMMENT que t'arrête de tenter des chiffre impossible quand on te propose des truc\ndans quelle tableau voulez vous flag ?\n1 = gauche, 2 = droite\nVotre choix: ";
                 GD = AskNumber(message, 1, 2);
-
             }
             printf("quelle case voulez vous flag ?\n");
             printf("écriver les coordoner voulu :\n ");
@@ -397,7 +409,7 @@ int main()
                 }
             }
             if (dificulte == 4) {
-                if (GD = 2) {
+                if (GD == 2) {
                     flag(grosTableauTroll, x, y, &nbBombe, &winLose, &winQ);
                 }
                 else {
@@ -413,7 +425,7 @@ int main()
     int restart = 0;
 
     if (winLose == 1) {
-
+        draw(grosTableau, grosTableauTroll);
         printf("\n\n WOW vous avez réussie a découvrire tout les bombe GG\n\n");
         printf("veux tu rejouer ?\n");
         printf("1 = oui et 2 = non\n");
@@ -449,7 +461,7 @@ int main()
         }
     }
     else if (winLose == 0) {
-
+        draw(grosTableau, grosTableauTroll);
         printf("\n\n ha rip tes mort x)\n\n");
         printf("veux tu rejouer ?\n");
         printf("1 = oui et 2 = non\n");
