@@ -2,14 +2,43 @@
 #include <stdlib.h>
 #include <time.h>
 #include <windows.h>
-
+#include <SDL.h>
 int n = 10;
 int m = 10;
+
+#define TEXTURE_COUNT 10
 
 typedef struct Case Case;
 
 void flag(Case** Tableau, int x, int y, int* nbBombe, int* winLose, int* winQ);
 void draw(Case** Tableau, Case** TableauMiroire);
+
+void init_resources(SDL_Renderer* r, SDL_Texture* textures[TEXTURE_COUNT])
+{
+    SDL_Surface* img = SDL_LoadBMP("");
+    textures[0] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
+
+    img = SDL_LoadBMP("");
+    textures[1] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
+
+
+
+}
+
+void clean_ressources(SDL_Window* w, SDL_Renderer* r, SDL_Texture* t) {
+    if (t != NULL)
+        SDL_DestroyTexture(t);
+
+    if (r != NULL)
+        SDL_DestroyRenderer(r);
+
+    if (w != NULL)
+        SDL_DestroyWindow(w);
+
+    SDL_Quit();
+}
 
 struct Case {
     int visible;
@@ -97,11 +126,140 @@ int AskNumber(const char* message, int min, int max)
     }
     return u;
 }
+void menu() {
+
+}
+
+int SDL(){
+    SDL_Window* fenetre = NULL;  // Déclaration de la fenêtre
+    SDL_Renderer* rendu = NULL;
+    SDL_Texture* texture = NULL;
+    SDL_Surface* image = NULL;
+    int nu = 5;
+    int tu = 5;
+    int window_width = 1980;
+    int window_height = 1080;
+
+    int img_width = 150;
+    int img_height = 75;
+    int img_x = 0;
+    int img_y = 0;
+
+    SDL_Rect dest_rect = { img_x, img_y, img_width, img_height };
+
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+        printf("Erreur > %s", SDL_GetError());
+        clean_ressources(NULL, NULL, NULL);
+        exit(EXIT_FAILURE);
+    }
+
+    fenetre = SDL_CreateWindow("Une fenetre SDL",
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED, window_width, window_height, SDL_WINDOW_RESIZABLE);  // Création de la fenêtre
+
+    if (fenetre == NULL)  //gestion des erreurs
+    {
+        printf("Erreur lors de la creation d'une fenetre : %s", SDL_GetError());
+        clean_ressources(NULL, NULL, NULL);
+        return EXIT_FAILURE;
+    }
+
+    rendu = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_SOFTWARE);
+    if (rendu == NULL)  //gestion des erreurs
+    {
+        printf("Erreur lors de la creation d'une rendu : %s", SDL_GetError());
+        clean_ressources(fenetre, NULL, NULL);
+        return EXIT_FAILURE;
+    }
+
+
+    SDL_Texture* textures[TEXTURE_COUNT];
+    init_resources(rendu, textures);
+
+    for (int i = 0; i < nu; i++) {
+        for (int j = 0; j < tu; j++) {
+            img_x = img_width * i;
+            img_y = img_height * j;
+            image = SDL_LoadBMP("img/pngwing.com_4.bmp");
+            if (image == NULL)  //gestion des erreurs
+            {
+                printf("Erreur lors de la creation d'une image : %s", SDL_GetError());
+                clean_ressources(fenetre, rendu, NULL);
+                return EXIT_FAILURE;
+            }
+
+            texture = SDL_CreateTextureFromSurface(rendu, image);
+            SDL_FreeSurface(image);
+            if (texture == NULL)
+            {
+                printf("Erreur lors de la creation d'une texture : %s", SDL_GetError());
+                clean_ressources(fenetre, rendu, NULL);
+                return EXIT_FAILURE;
+
+            }
+
+            dest_rect.x = img_x;
+            dest_rect.y = img_y;
+            dest_rect.w = img_width;
+            dest_rect.h = img_height;
+
+            if (SDL_RenderCopy(rendu, texture, NULL, &dest_rect) != 0)
+            {
+                printf("Erreur lors de la creation de RenderCopy : %s", SDL_GetError());
+                clean_ressources(fenetre, rendu, texture);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+    img_x = 0;
+    img_y = 0;
+
+    SDL_RenderPresent(rendu);
+    SDL_bool end = SDL_FALSE;
+    while (end != SDL_TRUE) {
+
+        SDL_Event click;
+
+        while (SDL_PollEvent(&click)) {
+
+            switch (click.type) {
+
+            case SDL_MOUSEBUTTONDOWN:
+                printf("%d / %d\n", click.motion.x, click.motion.y);
+                if (click.motion.x > img_x && click.motion.x < img_x + img_width * nu && click.motion.y > img_y && click.motion.y < img_y + img_height * tu) {
+                    if (click.motion.x > img_x && click.motion.x < img_x + img_width && click.motion.y > img_y && click.motion.y < img_y + img_height) {
+                        printf("coucouc sava ?");
+                    }
+                    printf("opn");
+
+                    end = SDL_TRUE;
+                }
+
+                break;
+
+            case SDL_QUIT:
+
+                end = SDL_TRUE;
+
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+    clean_ressources(fenetre, rendu, texture);
+    SDL_Quit();  //on quitte la SDL
+    return 0;
+}
+
+void Game();
 
 int main()
 {
-    int dificulte = 0;
-    int start = 0;
+    int start = 0
+    menu();
     printf("Yo ! Tu es là pour jouer au démineur ?\n");
     printf("1 = oui, 2 = oui\n");
     printf("votre choix: ");
@@ -112,6 +270,13 @@ int main()
         printf("48 49 48 48 49 48 48 49 32 48 49 49 48 49 49 48 48 32 48 48 49 48 48 48 48 48 32 48 49 49 49 49 48 48 49 32 48 48 49 48 48 48 48 48 32 48 49 49 48 48 48 48 49 32 48 48 49 48 48 48 48 48 32 48 48 49 49 48 49 48 49 32 48 48 49 48 48 48 48 48 32 48 49 48 48 48 49 48 49 32 48 49 49 48 48 48 48 49 32 48 49 49 49 48 48 49 49 32 48 49 49 49 48 49 48 48 32 48 49 49 48 48 49 48 49 32 48 49 49 49 48 48 49 48 32 48 48 49 48 48 48 48 48 32 48 49 48 48 48 49 48 49 32 48 49 49 48 48 49 49 49 32 48 49 49 48 48 49 49 49 32 48 49 49 49 48 48 49 49 32 48 48 49 48 48 48 48 48 32 48 49 49 48 48 49 48 48 32 48 49 49 48 48 48 48 49 32 48 49 49 48 49 49 49 48 32 48 49 49 49 48 48 49 49 32 48 48 49 48 48 48 48 48 32 48 49 49 48 49 49 48 48 32 48 49 49 48 48 49 48 49 32 48 48 49 48 48 48 48 48 32 48 49 49 48 49 48 49 48 32 48 49 49 48 48 49 48 49 32 48 49 49 49 48 49 48 49 32 48 48 49 48 48 48 48 48 32 48 49 49 48 48 49 48 48 32 48 49 49 48 49 49 49 49 32 48 49 49 48 49 49 49 48 32 48 49 49 49 48 49 48 48 32 48 48 49 48 48 48 48 48 32 48 49 49 48 48 48 49 49 32 48 49 49 48 48 49 48 49 32 48 49 49 48 49 49 48 48 32 48 49 49 49 48 49 48 49 32 48 49 49 48 49 48 48 49 32 48 48 49 48 49 49 48 49 32 48 49 49 48 49 49 48 48 32 48 49 49 48 48 48 48 49 32 48 48 49 48 48 48 48 48");
         return 0;
     }
+    Game();
+}
+
+void Game() {
+
+
+    int dificulte = 0;
     printf("Hey, du coup vu que j'ai la flemme de le faire pour toi, TU vas choisir la taille du démineur ! (c'est du x * y)\n");
     printf("x = "); scanf_s("%d", &n);
     printf("y = "); scanf_s("%d", &m);
@@ -122,7 +287,7 @@ int main()
         if (n >= 0 && m >= 0) {
             if (n == 0 && m == 0) {
                 printf("Tu te rends compte que X = 0 et Y = 0 ? C'est un tableau de RIEN ! Genre, YA RIEN. Tu ne peux même pas VOIR le tableau. Je... JE... TU ME SOULES. Pour la peine, turn off.\n");
-                return 0;
+                return;
             }
             printf("alors huuuu, 0 * n'importe quoi, sa fait 0 donc ya rien... ouai ouai c'est balo =')\n");
         }
@@ -132,7 +297,7 @@ int main()
     printf("Quelle est ta difficulté ?");
     printf("1 = facile, 2 = normale, 3 = Difficile\n");
     printf("votre choix: ");
-    message = "\nArrête de chercher la petite bête s'il te plaît\n1 = facile, 2 = normale, 3 = Difficile\nvotre choix: ";
+    const char* message = "\nArrête de chercher la petite bête s'il te plaît\n1 = facile, 2 = normale, 3 = Difficile\nvotre choix: ";
     dificulte = AskNumber(message, 1, 4);
     Case** Tableau = malloc(sizeof(Case*) * n);
     Case** TableauMiroire = NULL;
@@ -293,7 +458,7 @@ int main()
             if (dificulte != 4) {
                 if (Tableau[x][y].visible == 1) {
                     printf("tu a déja révéler se coup \n");
-                } 
+                }
                 else {
                     printf("new Revel \n");
                     TryRevel(Tableau, x, y);
@@ -330,7 +495,7 @@ int main()
                     printf("chanceux je pari ta fait au pif \n");
                 }
             }
-            else{
+            else {
                 if (Tableau[x][y].flag == 1 || TableauMiroire[x][y].flag == 1)
                 {
                     printf("vous avez flag cette endroit vous ne pouvez donc pas la revel !");
@@ -463,7 +628,7 @@ int main()
                 }
                 free(TableauMiroire);
             }
-            return 0;
+            return;
         }
     }
     else if (winLose == 0) {
@@ -511,10 +676,9 @@ int main()
                 }
                 free(TableauMiroire);
             }
-            return 0;
+            return;
         }
     }
-
 }
 
 void draw(Case** Tableau, Case** TableauMiroire)
