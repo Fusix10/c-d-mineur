@@ -6,7 +6,7 @@
 int n = 10;
 int m = 10;
 
-#define TEXTURE_COUNT 10
+#define TEXTURE_COUNT 11
 
 typedef struct Case Case;
 
@@ -15,16 +15,53 @@ void draw(Case** Tableau, Case** TableauMiroire);
 
 void init_resources(SDL_Renderer* r, SDL_Texture* textures[TEXTURE_COUNT])
 {
-    SDL_Surface* img = SDL_LoadBMP("");
+    SDL_Surface* img = SDL_LoadBMP("img/case.bmp");
     textures[0] = SDL_CreateTextureFromSurface(r, img);
     SDL_FreeSurface(img);
 
-    img = SDL_LoadBMP("");
+    img = SDL_LoadBMP("img/case_0.bmp");
     textures[1] = SDL_CreateTextureFromSurface(r, img);
     SDL_FreeSurface(img);
 
+    img = SDL_LoadBMP("img/case_1.bmp");
+    textures[2] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
 
+    img = SDL_LoadBMP("img/case_2.bmp");
+    textures[3] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
 
+    img = SDL_LoadBMP("img/case_3.bmp");
+    textures[4] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
+
+    img = SDL_LoadBMP("img/case_4.bmp");
+    textures[5] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
+
+    img = SDL_LoadBMP("img/case_5.bmp");
+    textures[6] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
+
+    img = SDL_LoadBMP("img/case_6.bmp");
+    textures[7] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
+    
+    img = SDL_LoadBMP("img/case_7.bmp");
+    textures[8] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
+
+    img = SDL_LoadBMP("img/case_8.bmp");
+    textures[9] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
+
+    img = SDL_LoadBMP("img/case_bombe.bmp");
+    textures[10] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
+
+    img = SDL_LoadBMP("img/case_flag.bmp");
+    textures[11] = SDL_CreateTextureFromSurface(r, img);
+    SDL_FreeSurface(img);
 }
 
 void clean_ressources(SDL_Window* w, SDL_Renderer* r, SDL_Texture* t) {
@@ -126,17 +163,14 @@ int AskNumber(const char* message, int min, int max)
     }
     return u;
 }
-void menu() {
-
-}
 
 int SDL(){
     SDL_Window* fenetre = NULL;  // Déclaration de la fenêtre
     SDL_Renderer* rendu = NULL;
     SDL_Texture* texture = NULL;
     SDL_Surface* image = NULL;
-    int nu = 5;
-    int tu = 5;
+    int n = 5;
+    int m = 5;
     int window_width = 1980;
     int window_height = 1080;
 
@@ -177,11 +211,11 @@ int SDL(){
     SDL_Texture* textures[TEXTURE_COUNT];
     init_resources(rendu, textures);
 
-    for (int i = 0; i < nu; i++) {
-        for (int j = 0; j < tu; j++) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
             img_x = img_width * i;
             img_y = img_height * j;
-            image = SDL_LoadBMP("img/pngwing.com_4.bmp");
+            image = textures[0];
             if (image == NULL)  //gestion des erreurs
             {
                 printf("Erreur lors de la creation d'une image : %s", SDL_GetError());
@@ -189,9 +223,7 @@ int SDL(){
                 return EXIT_FAILURE;
             }
 
-            texture = SDL_CreateTextureFromSurface(rendu, image);
-            SDL_FreeSurface(image);
-            if (texture == NULL)
+            if (textures == NULL)
             {
                 printf("Erreur lors de la creation d'une texture : %s", SDL_GetError());
                 clean_ressources(fenetre, rendu, NULL);
@@ -227,7 +259,7 @@ int SDL(){
 
             case SDL_MOUSEBUTTONDOWN:
                 printf("%d / %d\n", click.motion.x, click.motion.y);
-                if (click.motion.x > img_x && click.motion.x < img_x + img_width * nu && click.motion.y > img_y && click.motion.y < img_y + img_height * tu) {
+                if (click.motion.x > img_x && click.motion.x < img_x + img_width * n && click.motion.y > img_y && click.motion.y < img_y + img_height * m) {
                     if (click.motion.x > img_x && click.motion.x < img_x + img_width && click.motion.y > img_y && click.motion.y < img_y + img_height) {
                         printf("coucouc sava ?");
                     }
@@ -258,8 +290,7 @@ void Game();
 
 int main()
 {
-    int start = 0
-    menu();
+    int start = 0;
     printf("Yo ! Tu es là pour jouer au démineur ?\n");
     printf("1 = oui, 2 = oui\n");
     printf("votre choix: ");
@@ -274,7 +305,6 @@ int main()
 }
 
 void Game() {
-
 
     int dificulte = 0;
     printf("Hey, du coup vu que j'ai la flemme de le faire pour toi, TU vas choisir la taille du démineur ! (c'est du x * y)\n");

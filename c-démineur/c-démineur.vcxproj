@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\acamandona\Documents\SDL2-devel-2.26.3-VC\SDL2-2.26.3\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\acamandona\Documents\SDL2-devel-2.26.4-VC\SDL2-2.26.4\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\acamandona\Documents\SDL2-devel-2.26.3-VC\SDL2-2.26.3\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
