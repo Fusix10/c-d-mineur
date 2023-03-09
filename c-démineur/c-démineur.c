@@ -238,7 +238,7 @@ int main()
         }
     }
     int winLose;
-    winLose = 2;
+    winLose = 20;
     int winQ;
     winQ = 0;
     while (winLose != 1 && winLose != 0) {
